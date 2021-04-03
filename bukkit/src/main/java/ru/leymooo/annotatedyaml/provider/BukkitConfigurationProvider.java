@@ -1,6 +1,5 @@
 package ru.leymooo.annotatedyaml.provider;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import ru.leymooo.annotatedyaml.ConfigurationProvider;
@@ -10,20 +9,21 @@ import ru.leymooo.annotatedyaml.ConfigurationUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 
 public class BukkitConfigurationProvider implements ConfigurationProvider {
 
-    private final File file;
+    private File file;
     private BukkitConfigurationSettingsSerializer serializer;
     private YamlConfiguration yamlConfiguration;
     private boolean fileLoadedWithoutErrors;
 
+    public BukkitConfigurationProvider() {
+
+    }
+
     public BukkitConfigurationProvider(File file) {
         this.file = file;
-        reloadFileFromDisk();
     }
 
     @Override
@@ -51,6 +51,9 @@ public class BukkitConfigurationProvider implements ConfigurationProvider {
     }
 
     public YamlConfiguration getYamlConfiguration() {
+        if (yamlConfiguration == null) {
+            reloadFileFromDisk();
+        }
         return yamlConfiguration;
     }
 
@@ -60,31 +63,19 @@ public class BukkitConfigurationProvider implements ConfigurationProvider {
     }
 
     @Override
-    public Object get(String path) {
-        return yamlConfiguration.isList(path) ? yamlConfiguration.getList(path) : yamlConfiguration.get(path);
+    public <T> T get(String path) {
+        Object value = (yamlConfiguration.isList(path) ? yamlConfiguration.getList(path) : yamlConfiguration.get(path));
+        return value == null ? null : (T) value;
     }
 
     @Override
-    public Map<String, Object> getValues(boolean deep) {
-        return yamlConfiguration.getValues(deep);
+    public void set(String path, Object value) {
+        yamlConfiguration.set(path, value);
     }
 
     @Override
-    public Map<String, Object> getValues(Object section, boolean deep) {
-        if (section instanceof ConfigurationSection) {
-            return ((ConfigurationSection) section).getValues(deep);
-        }
-        return new HashMap<>();
-    }
-
-    @Override
-    public boolean isConfigurationSection(String path) {
-        return yamlConfiguration.isConfigurationSection(path);
-    }
-
-    @Override
-    public boolean isConfigurationSection(Object object) {
-        return object instanceof ConfigurationSection;
+    public void setFile(File file) {
+        this.file = file;
     }
 
     @Override

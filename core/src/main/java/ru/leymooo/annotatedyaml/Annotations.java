@@ -5,14 +5,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-public class ConfigOptions {
+public class Annotations {
 
     /**
      * How field will be named in config.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
-    public @interface ConfigKey {
+    public @interface Key {
         /**
          * The name of this field in the configuration.
          *
@@ -33,6 +33,14 @@ public class ConfigOptions {
          * @return the comments
          */
         String[] value();
+
+        /**
+         * Enum class with comments constants
+         * Value[0] should be an enum constant name
+         * Enum should have the getComment() method that returns String[]
+         * @return
+         */
+        Class enumClass() default Object.class;
     }
 
     /**

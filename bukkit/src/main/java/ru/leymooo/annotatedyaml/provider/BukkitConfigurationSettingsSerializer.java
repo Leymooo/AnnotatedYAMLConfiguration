@@ -1,12 +1,17 @@
 package ru.leymooo.annotatedyaml.provider;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
 import ru.leymooo.annotatedyaml.ConfigurationSettingsSerializer;
+import ru.leymooo.annotatedyaml.util.Validate;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -60,6 +65,9 @@ public class BukkitConfigurationSettingsSerializer implements ConfigurationSetti
     public String serialize(String key, Object object) {
         updateYamlSettings();
         Map<String, Object> map = new LinkedHashMap<>(1);
+        if (object instanceof Enum) {
+            object= ((Enum<?>) object).name();
+        }
         map.put(key, object);
         return yaml.dump(map);
     }
@@ -67,5 +75,34 @@ public class BukkitConfigurationSettingsSerializer implements ConfigurationSetti
     @Override
     public String getLineBreak() {
         return dumperOptions.getLineBreak().getString();
+    }
+
+    @Override
+    public Map<String, Object> getValues(boolean deep) {
+        return yamlConfiguration.getValues(deep);
+    }
+
+    @Override
+    public Map<String, Object> getValues(Object section, boolean deep) {
+        if (section instanceof ConfigurationSection) {
+            return ((ConfigurationSection) section).getValues(deep);
+        }
+        return new HashMap<>();
+    }
+
+    @Override
+    public boolean isConfigurationSection(String path) {
+        return yamlConfiguration.isConfigurationSection(path);
+    }
+
+    @Override
+    public boolean isConfigurationSection(Object object) {
+        return object instanceof ConfigurationSection;
+    }
+
+    @Override
+    public void registerSerializable(Class clazz) {
+        Validate.isTrue(ConfigurationSerializable.class.isAssignableFrom(clazz), "Class " + clazz + " does not implement ConfigurationSerializable");
+        ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz);
     }
 }
