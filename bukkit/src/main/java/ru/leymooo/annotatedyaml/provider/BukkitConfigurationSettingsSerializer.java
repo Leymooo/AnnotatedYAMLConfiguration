@@ -30,9 +30,9 @@ public class BukkitConfigurationSettingsSerializer implements ConfigurationSetti
         if (dumperOptions == null || representer == null || yaml == null) {
             try {
                 Class<?> clazz = yamlConfiguration.getClass();
-                Field dumperOptionsField = clazz.getDeclaredField("yamlOptions"), representerField = clazz.getDeclaredField(
-                        "yamlRepresenter"),
-                        yamlField = clazz.getDeclaredField("yaml");
+                Field dumperOptionsField = getField(clazz,"yamlOptions", "yamlDumperOptions");
+                Field representerField = getField(clazz, "yamlRepresenter", "representer");
+                Field yamlField = clazz.getDeclaredField("yaml");
                 dumperOptionsField.setAccessible(true);
                 representerField.setAccessible(true);
                 yamlField.setAccessible(true);
@@ -104,5 +104,13 @@ public class BukkitConfigurationSettingsSerializer implements ConfigurationSetti
     public void registerSerializable(Class clazz) {
         Validate.isTrue(ConfigurationSerializable.class.isAssignableFrom(clazz), "Class " + clazz + " does not implement ConfigurationSerializable");
         ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz);
+    }
+
+    private static Field getField(Class clazz, String oldName, String newName) throws NoSuchFieldException {
+        try {
+            return clazz.getDeclaredField(oldName);
+        } catch (Exception e) {
+            return clazz.getDeclaredField(newName);
+        }
     }
 }

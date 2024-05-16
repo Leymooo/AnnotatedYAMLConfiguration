@@ -6,11 +6,11 @@
     <parent>
         <artifactId>AnnotatedYAMLConfiguration</artifactId>
         <groupId>ru.leymooo</groupId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
     <artifactId>AnnotatedYAMLConfiguration-bukkit</artifactId>
     <packaging>jar</packaging>
 
@@ -38,8 +38,8 @@
         </dependency>
         <dependency>
             <groupId>ru.leymooo</groupId>
-            <artifactId>annotatedyamlconfiguration-core</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <artifactId>AnnotatedYAMLConfiguration-core</artifactId>
+            <version>1.2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
